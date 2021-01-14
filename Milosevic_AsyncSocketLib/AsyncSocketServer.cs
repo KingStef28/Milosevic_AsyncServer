@@ -41,6 +41,7 @@ namespace Milosevic_AsyncSocketLib
 
             Debug.WriteLine("Server avviato.");
 
+
             TcpClient client = await mServer.AcceptTcpClientAsync();
 
             Debug.WriteLine("Client connesso: " + client.Client.RemoteEndPoint);
