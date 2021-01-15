@@ -15,6 +15,12 @@ namespace Milosevic_AsyncSocketLib
         IPAddress mIP;
         int mPort;
         TcpListener mServer;
+        List<TcpClient> mClients;
+
+        public AsyncSocketServer()
+        {
+            mClients = new List<TcpClient>();
+        }
 
         //Server inizia as ascoltare
         public async void InAscolto(IPAddress ipaddr = null, int port = 23000)
@@ -41,11 +47,13 @@ namespace Milosevic_AsyncSocketLib
 
             Debug.WriteLine("Server avviato.");
 
-
-            TcpClient client = await mServer.AcceptTcpClientAsync();
-
-            Debug.WriteLine("Client connesso: " + client.Client.RemoteEndPoint);
-            RiceviMessaggio(client);
+            while (true)
+            {
+                TcpClient client = await mServer.AcceptTcpClientAsync();
+                mClients.Add(client);
+                Debug.WriteLine("Client connessi: {0}. Client connesso: {1}", mClients.Count, client.Client.RemoteEndPoint);
+                RiceviMessaggio(client);
+            }
         }
 
         public async void RiceviMessaggio(TcpClient client)
@@ -65,7 +73,7 @@ namespace Milosevic_AsyncSocketLib
                     Debug.WriteLine("In attesa di un messaggio");
                     //ricezione messaggio asincrono
                     nBytes = await reader.ReadAsync(buff, 0, buff.Length);
-                    
+
                     if (nBytes == 0)
                     {
                         Debug.WriteLine("Client Disconnesso");
@@ -73,6 +81,30 @@ namespace Milosevic_AsyncSocketLib
                     }
                     string recvText = new string(buff);
                     Debug.WriteLine("N° byte: {0}. Messaggio: {1}", nBytes, recvText);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Errore: " + ex.Message);
+            }
+        }
+
+        private void RimuoviClient(TcpClient client)
+        {
+            if (mClients.Contains(client))
+            {
+                mClients.Remove(client);
+            }
+        }
+
+        public void InviaTutti(string messaggio)
+        {
+            try
+            {
+                foreach (TcpClient client in mClients)
+                {
+                    byte[] buff = Encoding.ASCII.GetBytes(messaggio);
+                    client.GetStream().WriteAsync(buff, 0, buff.Length);
                 }
             }
             catch (Exception ex)

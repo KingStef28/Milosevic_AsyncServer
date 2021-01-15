@@ -34,5 +34,15 @@ namespace Milosevic_AsyncServer
         {
             mServer.InAscolto();
         }
+
+        private void btn_disconnettiti_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btn_invia_Click(object sender, RoutedEventArgs e)
+        {
+            mServer.InviaTutti(txt_messaggio.Text);
+        }
     }
 }
