@@ -112,5 +112,23 @@ namespace Milosevic_AsyncSocketLib
                 Debug.WriteLine("Errore: " + ex.Message);
             }
         }
+
+        public void Disconnetti()
+        {
+            try
+            {
+                foreach (TcpClient client in mClients)
+                {
+                    client.Close();
+                    RimuoviClient(client);
+                }
+                mServer.Stop();
+                mServer = null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Errore: " + ex.Message);
+            }
+        }
     }
 }

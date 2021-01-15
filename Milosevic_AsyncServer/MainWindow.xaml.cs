@@ -37,7 +37,7 @@ namespace Milosevic_AsyncServer
 
         private void btn_disconnettiti_Click(object sender, RoutedEventArgs e)
         {
-
+            mServer.Disconnetti();
         }
 
         private void btn_invia_Click(object sender, RoutedEventArgs e)
